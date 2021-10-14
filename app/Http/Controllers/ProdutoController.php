@@ -14,6 +14,8 @@ class ProdutoController extends Controller
     public function index()
     {
         //
+        $produtos = Produto::all();
+        return view('produtos.index', compact('produtos'));
     }
 
     /**
@@ -24,6 +26,7 @@ class ProdutoController extends Controller
     public function create()
     {
         //
+        return view ('produtos.create');
     }
 
     /**
@@ -35,6 +38,16 @@ class ProdutoController extends Controller
     public function store(Request $request)
     {
         //
+        $validateData = $request->validate([
+            'nome'                 =>       'required|max:45',
+            'descricao'            =>       'required|max:45',
+            'preco_custo'          =>       'required|max:45',
+            'preco_venda'          =>       'required|max:45'
+        ]);
+
+        $produto = Produto::create($validateData);
+
+        return redirect('/produtos')->with('success', 'Dados adicionados com sucesso');
     }
 
     /**
@@ -46,6 +59,8 @@ class ProdutoController extends Controller
     public function show($id)
     {
         //
+        $produto = Produto::findOrFail($id);
+        return view('produtos.show', compact('produto'));
     }
 
     /**
@@ -57,6 +72,10 @@ class ProdutoController extends Controller
     public function edit($id)
     {
         //
+        $produto = Produto::findOrFail($id);
+        // retornando a tela de edição com o
+        // objeto recuperado
+        return view('produtos.edit', compact('produto'));
     }
 
     /**
@@ -69,6 +88,15 @@ class ProdutoController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $validateData = $request->validate([
+            'nome'                 =>       'required|max:45',
+            'descricao'            =>       'required|max:45',
+            'preco_custo'          =>       'required|max:45',
+            'preco_venda'          =>       'required|max:45'
+        ]);
+
+        Produto::whereId($id)->update(validateData);
+        return redirect('/produtos')->with('success', 'Dados alterados com sucesso');
     }
 
     /**
@@ -80,5 +108,8 @@ class ProdutoController extends Controller
     public function destroy($id)
     {
         //
+        $produto = Produto::findOrFail($id);
+        $consulta->delete();
+        return redirect('/produtos')->with('success', 'Dados removidos com sucesso');
     }
 }
